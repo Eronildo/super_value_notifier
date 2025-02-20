@@ -1,6 +1,6 @@
 name: super_value_notifier
 description: "A Super Value Notifier for Flutter"
-version: 0.0.1
+version: 0.0.2
 homepage: "https://github.com/Eronildo/super_value_notifier"
 
 environment:

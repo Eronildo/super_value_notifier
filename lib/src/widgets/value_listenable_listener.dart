@@ -11,7 +11,7 @@ class ValueListenableListener<T> extends _ValueListenerBase<T> {
     required super.child,
   });
 
-  final Listener<T> listener;
+  final ValueListener<T> listener;
 
   @override
   void listen(value) => listener(value);
@@ -41,6 +41,15 @@ class _ValueListenerBaseState extends State<_ValueListenerBase> {
   void initState() {
     super.initState();
     widget.valueListenable.addListener(_listener);
+  }
+
+  @override
+  void didUpdateWidget(covariant _ValueListenerBase oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.valueListenable != oldWidget.valueListenable) {
+      oldWidget.valueListenable.removeListener(_listener);
+      widget.valueListenable.addListener(_listener);
+    }
   }
 
   @override

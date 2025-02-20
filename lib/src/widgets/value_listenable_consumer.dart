@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' hide Listener, WidgetBuilder;
+import 'package:flutter/widgets.dart'
+    hide Listener, WidgetBuilder, ValueWidgetBuilder;
 
 import 'typedefs.dart';
 
@@ -11,8 +12,8 @@ class ValueListenableConsumer<T> extends _ValueConsumerBase<T> {
     required this.builder,
   });
 
-  final Listener<T> listener;
-  final WidgetBuilder<T> builder;
+  final ValueListener<T> listener;
+  final ValueWidgetBuilder<T> builder;
 
   @override
   void listen(value) => listener(value);
@@ -50,6 +51,15 @@ class _ValueConsumerBaseState<T> extends State<_ValueConsumerBase> {
     super.initState();
     _value = widget.valueListenable.value;
     widget.valueListenable.addListener(_listener);
+  }
+
+  @override
+  void didUpdateWidget(covariant _ValueConsumerBase oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.valueListenable != oldWidget.valueListenable) {
+      oldWidget.valueListenable.removeListener(_listener);
+      widget.valueListenable.addListener(_listener);
+    }
   }
 
   @override

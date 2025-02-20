@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const CounterWidget(),
     );
   }
 }
@@ -51,6 +51,43 @@ class MyHomePage extends StatelessWidget {
         backgroundColor:
             asyncResult.isLoading ? Colors.grey : Colors.yellowAccent,
         child: const Icon(Icons.refresh),
+      ),
+    );
+  }
+}
+
+class CounterWidget extends StatelessWidget {
+  const CounterWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: ListenableListener(
+        listenable: counterNotifier,
+        listener: () {
+          debugPrint('LISTENER: ${counterNotifier.counter}');
+        },
+        child: ListenableConsumer(
+          listenable: counterNotifier,
+          listener: () {
+            debugPrint('Counter: ${counterNotifier.counter}');
+          },
+          builder: (context) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Counter: ${counterNotifier.counter}'),
+                  ElevatedButton(
+                    onPressed: counterNotifier.increment,
+                    child: const Text('Increment'),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -107,5 +144,17 @@ class ComputedController {
 
   void increment2() {
     counter2.value++;
+  }
+}
+
+final counterNotifier = CounterNotifier();
+
+class CounterNotifier extends ChangeNotifier {
+  int _counter = 0;
+  int get counter => _counter;
+
+  void increment() {
+    _counter++;
+    notifyListeners();
   }
 }
