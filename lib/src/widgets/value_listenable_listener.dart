@@ -3,38 +3,24 @@ import 'package:flutter/widgets.dart' hide Listener, WidgetBuilder;
 
 import 'typedefs.dart';
 
-class ValueListenableListener<T> extends _ValueListenerBase<T> {
+class ValueListenableListener<T> extends StatefulWidget {
   const ValueListenableListener({
     super.key,
-    required super.valueListenable,
-    required this.listener,
-    required super.child,
-  });
-
-  final ValueListener<T> listener;
-
-  @override
-  void listen(value) => listener(value);
-}
-
-abstract class _ValueListenerBase<T> extends StatefulWidget {
-  const _ValueListenerBase({
-    super.key,
     required this.valueListenable,
+    required this.listener,
     required this.child,
   });
-
   final ValueListenable<T> valueListenable;
+  final ValueListener<T> listener;
   final Widget child;
-  void listen(T value);
-
   @override
-  State<_ValueListenerBase> createState() => _ValueListenerBaseState();
+  State<StatefulWidget> createState() => _ValueListenableListenerState();
 }
 
-class _ValueListenerBaseState extends State<_ValueListenerBase> {
+class _ValueListenableListenerState<T>
+    extends State<ValueListenableListener<T>> {
   void _listener() {
-    widget.listen(widget.valueListenable.value);
+    widget.listener(widget.valueListenable.value);
   }
 
   @override
@@ -44,9 +30,9 @@ class _ValueListenerBaseState extends State<_ValueListenerBase> {
   }
 
   @override
-  void didUpdateWidget(covariant _ValueListenerBase oldWidget) {
+  void didUpdateWidget(covariant ValueListenableListener<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.valueListenable != oldWidget.valueListenable) {
+    if (oldWidget.valueListenable != widget.valueListenable) {
       oldWidget.valueListenable.removeListener(_listener);
       widget.valueListenable.addListener(_listener);
     }

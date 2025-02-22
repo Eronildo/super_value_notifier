@@ -4,45 +4,31 @@ import 'package:flutter/widgets.dart'
 
 import 'typedefs.dart';
 
-class ValueListenableConsumer<T> extends _ValueConsumerBase<T> {
+class ValueListenableConsumer<T> extends StatefulWidget {
   const ValueListenableConsumer({
     super.key,
-    required super.valueListenable,
+    required this.valueListenable,
     required this.listener,
     required this.builder,
-  });
-
-  final ValueListener<T> listener;
-  final ValueWidgetBuilder<T> builder;
-
-  @override
-  void listen(value) => listener(value);
-
-  @override
-  Widget build(BuildContext context, T value) => builder(context, value);
-}
-
-abstract class _ValueConsumerBase<T> extends StatefulWidget {
-  const _ValueConsumerBase({
-    super.key,
-    required this.valueListenable,
+    this.child,
   });
 
   final ValueListenable<T> valueListenable;
-
-  void listen(T value);
-  Widget build(BuildContext context, T value);
+  final ValueListener<T> listener;
+  final ValueWidgetBuilder<T> builder;
+  final Widget? child;
 
   @override
-  State<_ValueConsumerBase> createState() => _ValueConsumerBaseState<T>();
+  State<ValueListenableConsumer> createState() =>
+      _ValueListenableConsumerState<T>();
 }
 
-class _ValueConsumerBaseState<T> extends State<_ValueConsumerBase> {
+class _ValueListenableConsumerState<T> extends State<ValueListenableConsumer> {
   late T _value;
 
   void _listener() {
     final value = widget.valueListenable.value;
-    widget.listen(value);
+    widget.listener(value);
     setState(() => _value = value);
   }
 
@@ -54,7 +40,7 @@ class _ValueConsumerBaseState<T> extends State<_ValueConsumerBase> {
   }
 
   @override
-  void didUpdateWidget(covariant _ValueConsumerBase oldWidget) {
+  void didUpdateWidget(covariant ValueListenableConsumer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.valueListenable != oldWidget.valueListenable) {
       oldWidget.valueListenable.removeListener(_listener);
@@ -69,5 +55,6 @@ class _ValueConsumerBaseState<T> extends State<_ValueConsumerBase> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.build(context, _value);
+  Widget build(BuildContext context) =>
+      widget.builder(context, _value, widget.child);
 }

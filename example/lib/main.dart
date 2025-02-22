@@ -73,7 +73,7 @@ class CounterWidget extends StatelessWidget {
           listener: () {
             debugPrint('Counter: ${counterNotifier.counter}');
           },
-          builder: (context) {
+          builder: (context, _) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ValueWidgetBuilder;
 import 'package:flutter/scheduler.dart';
 
 import '../widgets/widgets.dart';
@@ -11,14 +11,14 @@ extension ValueNotifierX<T> on ValueNotifier<T> {
 }
 
 extension ValueListenableX<T> on ValueListenable<T> {
-  ValueListenableBuilder<T> builder(Widget Function(BuildContext context, T value) builder) =>
+  ValueListenableBuilder<T> valueBuilder(ValueWidgetBuilder<T> builder) =>
       ValueListenableBuilder<T>(
         valueListenable: this,
-        builder: (context, value, child) => builder(context, value),
+        builder: builder,
       );
 
-  ValueListenableListener<T> listener({
-    required void Function(T value) listener,
+  ValueListenableListener<T> valueListener({
+    required ValueListener<T> listener,
     required Widget child,
   }) =>
       ValueListenableListener<T>(
@@ -27,9 +27,9 @@ extension ValueListenableX<T> on ValueListenable<T> {
         child: child,
       );
 
-  ValueListenableConsumer<T> consumer({
-    required void Function(T value) listener,
-    required Widget Function(BuildContext context, T value) builder,
+  ValueListenableConsumer<T> valueConsumer({
+    required ValueListener<T> listener,
+    required ValueWidgetBuilder<T> builder,
   }) =>
       ValueListenableConsumer<T>(
         valueListenable: this,

@@ -2,42 +2,27 @@ import 'package:flutter/widgets.dart' hide Listener, WidgetBuilder;
 
 import 'typedefs.dart';
 
-class ListenableConsumer extends _ConsumerBase {
+class ListenableConsumer extends StatefulWidget {
   const ListenableConsumer({
     super.key,
-    required super.listenable,
+    required this.listenable,
     required this.listener,
     required this.builder,
-  });
-
-  final Listener listener;
-  final WidgetBuilder builder;
-
-  @override
-  void listen() => listener();
-
-  @override
-  Widget build(BuildContext context) => builder(context);
-}
-
-abstract class _ConsumerBase extends StatefulWidget {
-  const _ConsumerBase({
-    super.key,
-    required this.listenable,
+    this.child,
   });
 
   final Listenable listenable;
-
-  void listen();
-  Widget build(BuildContext context);
+  final Listener listener;
+  final WidgetBuilder builder;
+  final Widget? child;
 
   @override
-  State<_ConsumerBase> createState() => _ConsumerBaseState();
+  State<StatefulWidget> createState() => _ListenableConsumerState();
 }
 
-class _ConsumerBaseState extends State<_ConsumerBase> {
+class _ListenableConsumerState extends State<ListenableConsumer> {
   void _listener() {
-    widget.listen();
+    widget.listener();
     setState(() {});
   }
 
@@ -48,7 +33,7 @@ class _ConsumerBaseState extends State<_ConsumerBase> {
   }
 
   @override
-  void didUpdateWidget(covariant _ConsumerBase oldWidget) {
+  void didUpdateWidget(covariant ListenableConsumer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.listenable != oldWidget.listenable) {
       oldWidget.listenable.removeListener(_listener);
@@ -63,5 +48,5 @@ class _ConsumerBaseState extends State<_ConsumerBase> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.build(context);
+  Widget build(BuildContext context) => widget.builder(context, widget.child);
 }

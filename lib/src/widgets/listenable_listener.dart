@@ -2,38 +2,25 @@ import 'package:flutter/widgets.dart' hide Listener, WidgetBuilder;
 
 import 'typedefs.dart';
 
-class ListenableListener extends _ListenerBase {
+class ListenableListener extends StatefulWidget {
   const ListenableListener({
     super.key,
-    required super.listenable,
-    required this.listener,
-    required super.child,
-  });
-
-  final Listener listener;
-
-  @override
-  void listen() => listener();
-}
-
-abstract class _ListenerBase extends StatefulWidget {
-  const _ListenerBase({
-    super.key,
     required this.listenable,
+    required this.listener,
     required this.child,
   });
 
   final Listenable listenable;
+  final Listener listener;
   final Widget child;
-  void listen();
 
   @override
-  State<_ListenerBase> createState() => _ListenerBaseState();
+  State<StatefulWidget> createState() => _ListenableListenerState();
 }
 
-class _ListenerBaseState extends State<_ListenerBase> {
+class _ListenableListenerState extends State<ListenableListener> {
   void _listener() {
-    widget.listen();
+    widget.listener();
   }
 
   @override
@@ -43,7 +30,7 @@ class _ListenerBaseState extends State<_ListenerBase> {
   }
 
   @override
-  void didUpdateWidget(covariant _ListenerBase oldWidget) {
+  void didUpdateWidget(covariant ListenableListener oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.listenable != oldWidget.listenable) {
       oldWidget.listenable.removeListener(_listener);
